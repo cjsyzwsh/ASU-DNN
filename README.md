@@ -1,4 +1,4 @@
-## ASU-DNN
+## Deep neural networks for choice analysis: Architectural design with alternative-specific utility functions
 
 Shenhao Wang, Baichuan Mo, Jinhua Zhao
 
