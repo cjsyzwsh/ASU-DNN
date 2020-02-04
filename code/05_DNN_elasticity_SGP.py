@@ -279,241 +279,241 @@ top_ten_full_dnn_train_index = full_dnn_train_df.sort_values('average_validation
 ############################################################
 ############################################################
 # specify hyperparameter space for fully connected DNN
-# M_list = [1,2,3,4,5,6,7,8,9,10,11,12] # 5
-# n_hidden_list = [60, 120, 240, 360, 480, 600] # 6
-# l1_const_list = [1e-3, 1e-5, 1e-10, 1e-20]# 8
-# l2_const_list = [1e-3, 1e-5, 1e-10, 1e-20]# 8
-# dropout_rate_list = [1e-3, 1e-5] # 5
-# batch_normalization_list = [True, False] # 2
-# learning_rate_list = [0.01, 1e-3, 1e-4, 1e-5] # 5
-# n_iteration_list = [500, 1000, 5000, 10000, 20000] # 5
-# n_mini_batch_list = [50, 100, 200, 500, 1000] # 5
-##########################
-# num_top_model = 10
-# full_dnn_dic_top_10 = {}
-# var_list_for_elast = ['walk_walktime','bus_cost','bus_ivt','ridesharing_cost','ridesharing_ivt',
-#             'drive_cost','drive_ivt','av_cost','av_ivt']
-#
-# elast_records_full_dnn = {}
-# elast_records_full_dnn_save = {}
-#
-# key_choice_index = ['Walk','PT','RH','Drive','AV']
-#
-# for i in range(num_top_model):
-#     print("------------------------")
-#     print("Estimate full connected model ", str(i))
-#     index = top_ten_full_dnn_index[i]
-#     # M = int(full_dnn_finer_df.loc[index,'M'])
-#     # n_hidden = int(full_dnn_finer_df.loc[index,'n_hidden'])
-#     # l1_const = full_dnn_finer_df.loc[index,'l1_const']
-#     # l2_const = full_dnn_finer_df.loc[index,'l2_const']
-#     # dropout_rate = full_dnn_finer_df.loc[index,'dropout_rate']
-#     # batch_normalization = full_dnn_finer_df.loc[index,'batch_normalization']
-#     # learning_rate = full_dnn_finer_df.loc[index,'batch_normalization']
-#     # n_iteration =int(full_dnn_finer_df.loc[index,'n_iteration'])
-#     # n_mini_batch = int(full_dnn_finer_df.loc[index,'n_mini_batch'])
-#
-#
-#     M = full_dnn_finer_dic[index]['M']
-#     n_hidden = full_dnn_finer_dic[index]['n_hidden']
-#     l1_const = full_dnn_finer_dic[index]['l1_const']
-#     l2_const = full_dnn_finer_dic[index]['l2_const']
-#     dropout_rate = full_dnn_finer_dic[index]['dropout_rate']
-#     batch_normalization = full_dnn_finer_dic[index]['batch_normalization']
-#     learning_rate = full_dnn_finer_dic[index]['learning_rate']
-#     n_iteration = full_dnn_finer_dic[index]['n_iteration']
-#     n_mini_batch = full_dnn_finer_dic[index]['n_mini_batch']
-#
-#
-#     # store information
-#     full_dnn_dic_top_10[i] = {}
-#     full_dnn_dic_top_10[i]['M'] = M
-#     full_dnn_dic_top_10[i]['n_hidden'] = n_hidden
-#     full_dnn_dic_top_10[i]['l1_const'] = l1_const
-#     full_dnn_dic_top_10[i]['l2_const'] = l2_const
-#     full_dnn_dic_top_10[i]['dropout_rate'] = dropout_rate
-#     full_dnn_dic_top_10[i]['batch_normalization'] = batch_normalization
-#     full_dnn_dic_top_10[i]['learning_rate'] = learning_rate
-#     full_dnn_dic_top_10[i]['n_iteration'] = n_iteration
-#     full_dnn_dic_top_10[i]['n_mini_batch'] = n_mini_batch
-#     print(full_dnn_dic_top_10[i])
-#
-#     var_list_index = list(df_sp_train.columns)
-#     for j in range(5):
-#         # five fold training with cross validation
-#         df_sp_train,df_sp_validation = generate_cross_validation_set(df_sp_combined_train, j)
-#         X_train = df_sp_train.iloc[:, 1:].values
-#
-#         index_for_var_elas = [var_list_index.index(var) - 1 for var in var_list_for_elast] # -1 because we starts from 1:
-#         Y_train = df_sp_train.iloc[:, 0].values
-#         X_validation = df_sp_validation.iloc[:, 1:].values
-#         Y_validation = df_sp_validation.iloc[:, 0].values
-#         X_test = df_sp_test.iloc[:, 1:].values
-#         Y_test = df_sp_test.iloc[:, 0].values
-#         # training
-#         elast_records = util.full_dnn_elasticity(X_train, Y_train, X_validation, Y_validation, X_test, Y_test,
-#                                        M, n_hidden, l1_const, l2_const, dropout_rate, batch_normalization, learning_rate, n_iteration, n_mini_batch,
-#                                                  index_for_var_elas, df_sp_test_nonstand, j, i, var_list_index)
-#
-#         new_col = ['K-fold','Model_name']
-#         for key in elast_records.columns: # change index to name
-#             if key != 'K-fold' and key != 'Model_name':
-#                 mode = key_choice_index[int(key.split('___')[0])]
-#                 var = key.split('___')[1]
-#                 new_key = mode + '___' + var
-#                 new_col.append(new_key)
-#         elast_records.columns = new_col
-#
-#         if len(elast_records_full_dnn) == 0:
-#             elast_records_full_dnn = pd.DataFrame(elast_records)
-#         else:
-#             elast_records_full_dnn = pd.concat([elast_records_full_dnn, pd.DataFrame(elast_records)])
-#
-#
-#
-#         # store information
-# modes_list = ['Walk','PT','RH','AV','Drive']
-# # save elasticity
-# elast_records_full_dnn.to_csv('output/elasticity_full_DNN_raw.csv', index=False)
-#
-# elast_records_full_dnn_save = {'Variables': var_list_for_elast}
-# for mode in modes_list:
-#     elast_records_full_dnn_save[mode] = [0] * len(var_list_for_elast)
-# elast_records_full_dnn_save = pd.DataFrame(elast_records_full_dnn_save)
-# for col in elast_records_full_dnn.columns:
-#     if col != 'K-fold' and col != 'Model_name':
-#         mode = col.split('___')[0]
-#         var = col.split('___')[1]
-#         elast_records_full_dnn_save.loc[
-#             elast_records_full_dnn_save['Variables'] == var, mode] = elast_records_full_dnn.loc[:, col].mean()
-# elast_records_full_dnn_save.to_csv('output/elasticity_full_DNN.csv', index=False)
+M_list = [1,2,3,4,5,6,7,8,9,10,11,12] # 5
+n_hidden_list = [60, 120, 240, 360, 480, 600] # 6
+l1_const_list = [1e-3, 1e-5, 1e-10, 1e-20]# 8
+l2_const_list = [1e-3, 1e-5, 1e-10, 1e-20]# 8
+dropout_rate_list = [1e-3, 1e-5] # 5
+batch_normalization_list = [True, False] # 2
+learning_rate_list = [0.01, 1e-3, 1e-4, 1e-5] # 5
+n_iteration_list = [500, 1000, 5000, 10000, 20000] # 5
+n_mini_batch_list = [50, 100, 200, 500, 1000] # 5
+#########################
+num_top_model = 10
+full_dnn_dic_top_10 = {}
+var_list_for_elast = ['walk_walktime','bus_cost','bus_ivt','ridesharing_cost','ridesharing_ivt',
+            'drive_cost','drive_ivt','av_cost','av_ivt']
 
-# ############################################################
-# ############################################################
+elast_records_full_dnn = {}
+elast_records_full_dnn_save = {}
+
+key_choice_index = ['Walk','PT','RH','Drive','AV']
+
+for i in range(num_top_model):
+    print("------------------------")
+    print("Estimate full connected model ", str(i))
+    index = top_ten_full_dnn_index[i]
+    # M = int(full_dnn_finer_df.loc[index,'M'])
+    # n_hidden = int(full_dnn_finer_df.loc[index,'n_hidden'])
+    # l1_const = full_dnn_finer_df.loc[index,'l1_const']
+    # l2_const = full_dnn_finer_df.loc[index,'l2_const']
+    # dropout_rate = full_dnn_finer_df.loc[index,'dropout_rate']
+    # batch_normalization = full_dnn_finer_df.loc[index,'batch_normalization']
+    # learning_rate = full_dnn_finer_df.loc[index,'batch_normalization']
+    # n_iteration =int(full_dnn_finer_df.loc[index,'n_iteration'])
+    # n_mini_batch = int(full_dnn_finer_df.loc[index,'n_mini_batch'])
+
+
+    M = full_dnn_finer_dic[index]['M']
+    n_hidden = full_dnn_finer_dic[index]['n_hidden']
+    l1_const = full_dnn_finer_dic[index]['l1_const']
+    l2_const = full_dnn_finer_dic[index]['l2_const']
+    dropout_rate = full_dnn_finer_dic[index]['dropout_rate']
+    batch_normalization = full_dnn_finer_dic[index]['batch_normalization']
+    learning_rate = full_dnn_finer_dic[index]['learning_rate']
+    n_iteration = full_dnn_finer_dic[index]['n_iteration']
+    n_mini_batch = full_dnn_finer_dic[index]['n_mini_batch']
+
+
+    # store information
+    full_dnn_dic_top_10[i] = {}
+    full_dnn_dic_top_10[i]['M'] = M
+    full_dnn_dic_top_10[i]['n_hidden'] = n_hidden
+    full_dnn_dic_top_10[i]['l1_const'] = l1_const
+    full_dnn_dic_top_10[i]['l2_const'] = l2_const
+    full_dnn_dic_top_10[i]['dropout_rate'] = dropout_rate
+    full_dnn_dic_top_10[i]['batch_normalization'] = batch_normalization
+    full_dnn_dic_top_10[i]['learning_rate'] = learning_rate
+    full_dnn_dic_top_10[i]['n_iteration'] = n_iteration
+    full_dnn_dic_top_10[i]['n_mini_batch'] = n_mini_batch
+    print(full_dnn_dic_top_10[i])
+
+    var_list_index = list(df_sp_train.columns)
+    for j in range(5):
+        # five fold training with cross validation
+        df_sp_train,df_sp_validation = generate_cross_validation_set(df_sp_combined_train, j)
+        X_train = df_sp_train.iloc[:, 1:].values
+
+        index_for_var_elas = [var_list_index.index(var) - 1 for var in var_list_for_elast] # -1 because we starts from 1:
+        Y_train = df_sp_train.iloc[:, 0].values
+        X_validation = df_sp_validation.iloc[:, 1:].values
+        Y_validation = df_sp_validation.iloc[:, 0].values
+        X_test = df_sp_test.iloc[:, 1:].values
+        Y_test = df_sp_test.iloc[:, 0].values
+        # training
+        elast_records = util.full_dnn_elasticity(X_train, Y_train, X_validation, Y_validation, X_test, Y_test,
+                                       M, n_hidden, l1_const, l2_const, dropout_rate, batch_normalization, learning_rate, n_iteration, n_mini_batch,
+                                                 index_for_var_elas, df_sp_test_nonstand, j, i, var_list_index)
+
+        new_col = ['K-fold','Model_name']
+        for key in elast_records.columns: # change index to name
+            if key != 'K-fold' and key != 'Model_name':
+                mode = key_choice_index[int(key.split('___')[0])]
+                var = key.split('___')[1]
+                new_key = mode + '___' + var
+                new_col.append(new_key)
+        elast_records.columns = new_col
+
+        if len(elast_records_full_dnn) == 0:
+            elast_records_full_dnn = pd.DataFrame(elast_records)
+        else:
+            elast_records_full_dnn = pd.concat([elast_records_full_dnn, pd.DataFrame(elast_records)])
+
+
+
+        # store information
+modes_list = ['Walk','PT','RH','AV','Drive']
+# save elasticity
+elast_records_full_dnn.to_csv('output/elasticity_full_DNN_raw.csv', index=False)
+
+elast_records_full_dnn_save = {'Variables': var_list_for_elast}
+for mode in modes_list:
+    elast_records_full_dnn_save[mode] = [0] * len(var_list_for_elast)
+elast_records_full_dnn_save = pd.DataFrame(elast_records_full_dnn_save)
+for col in elast_records_full_dnn.columns:
+    if col != 'K-fold' and col != 'Model_name':
+        mode = col.split('___')[0]
+        var = col.split('___')[1]
+        elast_records_full_dnn_save.loc[
+            elast_records_full_dnn_save['Variables'] == var, mode] = elast_records_full_dnn.loc[:, col].mean()
+elast_records_full_dnn_save.to_csv('output/elasticity_full_DNN.csv', index=False)
+
+############################################################
+############################################################
 # specify hyperparameter space for sparsely connected DNN
 # define hyperparameter space
 # note: [0,1,2,3,4] meaning [walk,bus,ridesharing,drive,av]
-# df_sp_train = pd.read_csv('data/data_AV_Singapore_v1_sp_train.csv')
-# df_sp_validation = pd.read_csv('data/data_AV_Singapore_v1_sp_validation.csv')
-# # here we combine train and validation set to recreate training and validation sets...
-# df_sp_combined_train = pd.concat([df_sp_train, df_sp_validation], axis = 0)
-# df_sp_combined_train.index = np.arange(df_sp_combined_train.shape[0])
-# df_sp_test = pd.read_csv('data/data_AV_Singapore_v1_sp_test.csv')
-#
-# y_vars = ['choice']
-# z_vars = ['male', 'young_age', 'old_age', 'low_edu', 'high_edu',
-#           'low_inc', 'high_inc', 'full_job', 'age', 'inc', 'edu']
-# x0_vars = ['walk_walktime']
-# x1_vars = ['bus_cost', 'bus_walktime', 'bus_waittime', 'bus_ivt']
-# x2_vars = ['ridesharing_cost', 'ridesharing_waittime', 'ridesharing_ivt']
-# x3_vars = ['drive_cost', 'drive_walktime', 'drive_ivt']
-# x4_vars = ['av_cost', 'av_waittime', 'av_ivt']
-#
-# all_elas_var = {'x0_vars':['walk_walktime'],
-#                  'x1_vars':['bus_cost', 'bus_walktime', 'bus_waittime', 'bus_ivt'],
-#                  'x2_vars':['ridesharing_cost', 'ridesharing_waittime', 'ridesharing_ivt'],
-#                  'x3_vars':['drive_cost', 'drive_walktime', 'drive_ivt'],
-#                  'x4_vars':['av_cost', 'av_waittime', 'av_ivt']}
-#
-# # random draw...and HPO
-# num_top_model = 10
-# sparse_dnn_dic_top10 = {}
-#
-# elast_records_sparse_dnn = {}
-# elast_records_sparse_dnn_save = {}
-#
-# key_choice_index = ['Walk','PT','RH','Drive','AV']
-#
-# for i in range(num_top_model):
-#     print("------------------------")
-#     print("Estimate sparse connected model ", str(i))
-#     index = top_ten_sparse_dnn_index[i]
-#
-#
-#     M_before = sparse_dnn_finer_dic[index]['M_before']
-#     M_after = sparse_dnn_finer_dic[index]['M_after']
-#     n_hidden_before = sparse_dnn_finer_dic[index]['n_hidden_before']
-#     n_hidden_after = sparse_dnn_finer_dic[index]['n_hidden_after']
-#     l1_const = sparse_dnn_finer_dic[index]['l1_const']
-#     l2_const = sparse_dnn_finer_dic[index]['l2_const']
-#     dropout_rate = sparse_dnn_finer_dic[index]['dropout_rate']
-#     batch_normalization = sparse_dnn_finer_dic[index]['batch_normalization']
-#     learning_rate = sparse_dnn_finer_dic[index]['learning_rate']
-#     n_iteration = sparse_dnn_finer_dic[index]['n_iteration']
-#     n_mini_batch = sparse_dnn_finer_dic[index]['n_mini_batch']
-#
-#
-#
-#     # store information
-#     sparse_dnn_dic[i] = {}
-#     sparse_dnn_dic[i]['M_before'] = M_before
-#     sparse_dnn_dic[i]['M_after'] = M_after
-#     sparse_dnn_dic[i]['n_hidden_before'] = n_hidden_before
-#     sparse_dnn_dic[i]['n_hidden_after'] = n_hidden_after
-#     sparse_dnn_dic[i]['l1_const'] = l1_const
-#     sparse_dnn_dic[i]['l2_const'] = l2_const
-#     sparse_dnn_dic[i]['dropout_rate'] = dropout_rate
-#     sparse_dnn_dic[i]['batch_normalization'] = batch_normalization
-#     sparse_dnn_dic[i]['learning_rate'] = learning_rate
-#     sparse_dnn_dic[i]['n_iteration'] = n_iteration
-#     sparse_dnn_dic[i]['n_mini_batch'] = n_mini_batch
-#     print(sparse_dnn_dic[i])
-#
-#     for j in range(5):
-#         # five fold training with cross validation
-#         df_sp_train,df_sp_validation = generate_cross_validation_set(df_sp_combined_train, j)
-#         X0_train = df_sp_train[x0_vars].values
-#         X1_train = df_sp_train[x1_vars].values
-#         X2_train = df_sp_train[x2_vars].values
-#         X3_train = df_sp_train[x3_vars].values
-#         X4_train = df_sp_train[x4_vars].values
-#         Y_train = df_sp_train[y_vars].values.reshape(-1)
-#         Z_train = df_sp_train[z_vars].values
-#
-#         X0_validation = df_sp_validation[x0_vars].values
-#         X1_validation = df_sp_validation[x1_vars].values
-#         X2_validation = df_sp_validation[x2_vars].values
-#         X3_validation = df_sp_validation[x3_vars].values
-#         X4_validation = df_sp_validation[x4_vars].values
-#         Y_validation = df_sp_validation[y_vars].values.reshape(-1)
-#         Z_validation = df_sp_validation[z_vars].values
-#
-#         X0_test = df_sp_test[x0_vars].values
-#         X1_test = df_sp_test[x1_vars].values
-#         X2_test = df_sp_test[x2_vars].values
-#         X3_test = df_sp_test[x3_vars].values
-#         X4_test = df_sp_test[x4_vars].values
-#         Y_test = df_sp_test[y_vars].values.reshape(-1)
-#         Z_test = df_sp_test[z_vars].values
-#
-#         # one estimation here
-#
-#
-#
-#         elast_records = util.dnn_alt_spec_elasticity(X0_train,X1_train,X2_train,X3_train,X4_train,Y_train,Z_train,
-#                                             X0_validation,X1_validation,X2_validation,X3_validation,X4_validation,Y_validation,Z_validation,
-#                                             X0_test,X1_test,X2_test,X3_test,X4_test,Y_test,Z_test,
-#                                             M_before,M_after,n_hidden_before,n_hidden_after,l1_const,l2_const,
-#                                             dropout_rate,batch_normalization,learning_rate,n_iteration,n_mini_batch,
-#                                                      all_elas_var, df_sp_test_nonstand,j,i)
-#
-#         new_col = ['K-fold','Model_name']
-#         for key in elast_records.columns: # change index to name
-#             if key != 'K-fold' and key != 'Model_name':
-#                 mode = key_choice_index[int(key.split('___')[0])]
-#                 var = key.split('___')[1]
-#                 new_key = mode + '___' + var
-#                 new_col.append(new_key)
-#         elast_records.columns = new_col
-#
-#         if len(elast_records_sparse_dnn) == 0:
-#             elast_records_sparse_dnn = pd.DataFrame(elast_records)
-#         else:
-#             elast_records_sparse_dnn = pd.concat([elast_records_sparse_dnn, pd.DataFrame(elast_records)])
-#
-#         # store information
-#
-#
+df_sp_train = pd.read_csv('data/data_AV_Singapore_v1_sp_train.csv')
+df_sp_validation = pd.read_csv('data/data_AV_Singapore_v1_sp_validation.csv')
+# here we combine train and validation set to recreate training and validation sets...
+df_sp_combined_train = pd.concat([df_sp_train, df_sp_validation], axis = 0)
+df_sp_combined_train.index = np.arange(df_sp_combined_train.shape[0])
+df_sp_test = pd.read_csv('data/data_AV_Singapore_v1_sp_test.csv')
+
+y_vars = ['choice']
+z_vars = ['male', 'young_age', 'old_age', 'low_edu', 'high_edu',
+          'low_inc', 'high_inc', 'full_job', 'age', 'inc', 'edu']
+x0_vars = ['walk_walktime']
+x1_vars = ['bus_cost', 'bus_walktime', 'bus_waittime', 'bus_ivt']
+x2_vars = ['ridesharing_cost', 'ridesharing_waittime', 'ridesharing_ivt']
+x3_vars = ['drive_cost', 'drive_walktime', 'drive_ivt']
+x4_vars = ['av_cost', 'av_waittime', 'av_ivt']
+
+all_elas_var = {'x0_vars':['walk_walktime'],
+                 'x1_vars':['bus_cost', 'bus_walktime', 'bus_waittime', 'bus_ivt'],
+                 'x2_vars':['ridesharing_cost', 'ridesharing_waittime', 'ridesharing_ivt'],
+                 'x3_vars':['drive_cost', 'drive_walktime', 'drive_ivt'],
+                 'x4_vars':['av_cost', 'av_waittime', 'av_ivt']}
+
+# random draw...and HPO
+num_top_model = 10
+sparse_dnn_dic_top10 = {}
+
+elast_records_sparse_dnn = {}
+elast_records_sparse_dnn_save = {}
+
+key_choice_index = ['Walk','PT','RH','Drive','AV']
+
+for i in range(num_top_model):
+    print("------------------------")
+    print("Estimate sparse connected model ", str(i))
+    index = top_ten_sparse_dnn_index[i]
+
+
+    M_before = sparse_dnn_finer_dic[index]['M_before']
+    M_after = sparse_dnn_finer_dic[index]['M_after']
+    n_hidden_before = sparse_dnn_finer_dic[index]['n_hidden_before']
+    n_hidden_after = sparse_dnn_finer_dic[index]['n_hidden_after']
+    l1_const = sparse_dnn_finer_dic[index]['l1_const']
+    l2_const = sparse_dnn_finer_dic[index]['l2_const']
+    dropout_rate = sparse_dnn_finer_dic[index]['dropout_rate']
+    batch_normalization = sparse_dnn_finer_dic[index]['batch_normalization']
+    learning_rate = sparse_dnn_finer_dic[index]['learning_rate']
+    n_iteration = sparse_dnn_finer_dic[index]['n_iteration']
+    n_mini_batch = sparse_dnn_finer_dic[index]['n_mini_batch']
+
+
+
+    # store information
+    sparse_dnn_dic[i] = {}
+    sparse_dnn_dic[i]['M_before'] = M_before
+    sparse_dnn_dic[i]['M_after'] = M_after
+    sparse_dnn_dic[i]['n_hidden_before'] = n_hidden_before
+    sparse_dnn_dic[i]['n_hidden_after'] = n_hidden_after
+    sparse_dnn_dic[i]['l1_const'] = l1_const
+    sparse_dnn_dic[i]['l2_const'] = l2_const
+    sparse_dnn_dic[i]['dropout_rate'] = dropout_rate
+    sparse_dnn_dic[i]['batch_normalization'] = batch_normalization
+    sparse_dnn_dic[i]['learning_rate'] = learning_rate
+    sparse_dnn_dic[i]['n_iteration'] = n_iteration
+    sparse_dnn_dic[i]['n_mini_batch'] = n_mini_batch
+    print(sparse_dnn_dic[i])
+
+    for j in range(5):
+        # five fold training with cross validation
+        df_sp_train,df_sp_validation = generate_cross_validation_set(df_sp_combined_train, j)
+        X0_train = df_sp_train[x0_vars].values
+        X1_train = df_sp_train[x1_vars].values
+        X2_train = df_sp_train[x2_vars].values
+        X3_train = df_sp_train[x3_vars].values
+        X4_train = df_sp_train[x4_vars].values
+        Y_train = df_sp_train[y_vars].values.reshape(-1)
+        Z_train = df_sp_train[z_vars].values
+
+        X0_validation = df_sp_validation[x0_vars].values
+        X1_validation = df_sp_validation[x1_vars].values
+        X2_validation = df_sp_validation[x2_vars].values
+        X3_validation = df_sp_validation[x3_vars].values
+        X4_validation = df_sp_validation[x4_vars].values
+        Y_validation = df_sp_validation[y_vars].values.reshape(-1)
+        Z_validation = df_sp_validation[z_vars].values
+
+        X0_test = df_sp_test[x0_vars].values
+        X1_test = df_sp_test[x1_vars].values
+        X2_test = df_sp_test[x2_vars].values
+        X3_test = df_sp_test[x3_vars].values
+        X4_test = df_sp_test[x4_vars].values
+        Y_test = df_sp_test[y_vars].values.reshape(-1)
+        Z_test = df_sp_test[z_vars].values
+
+        # one estimation here
+
+
+
+        elast_records = util.dnn_alt_spec_elasticity(X0_train,X1_train,X2_train,X3_train,X4_train,Y_train,Z_train,
+                                            X0_validation,X1_validation,X2_validation,X3_validation,X4_validation,Y_validation,Z_validation,
+                                            X0_test,X1_test,X2_test,X3_test,X4_test,Y_test,Z_test,
+                                            M_before,M_after,n_hidden_before,n_hidden_after,l1_const,l2_const,
+                                            dropout_rate,batch_normalization,learning_rate,n_iteration,n_mini_batch,
+                                                     all_elas_var, df_sp_test_nonstand,j,i)
+
+        new_col = ['K-fold','Model_name']
+        for key in elast_records.columns: # change index to name
+            if key != 'K-fold' and key != 'Model_name':
+                mode = key_choice_index[int(key.split('___')[0])]
+                var = key.split('___')[1]
+                new_key = mode + '___' + var
+                new_col.append(new_key)
+        elast_records.columns = new_col
+
+        if len(elast_records_sparse_dnn) == 0:
+            elast_records_sparse_dnn = pd.DataFrame(elast_records)
+        else:
+            elast_records_sparse_dnn = pd.concat([elast_records_sparse_dnn, pd.DataFrame(elast_records)])
+
+        # store information
+
+
 
 
 

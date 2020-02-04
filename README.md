@@ -6,4 +6,34 @@ Whereas deep neural network (DNN) is increasingly applied to choice analysis, it
 
 ### Notes: this repository has incorporated the codes and two data sets. Unfortunately the Singapore data set cannot be uploaded due to the policy restriction.
 
+## Code
 
+### 0_export_data.R
+Export Train dataset from R packages.
+
+### 0_combine_R_datasets.py
+Combine all Train datasets, and put the results in code/data/
+
+### 1_hyper_SGP.py
+Train all DNN related models (F-DNN, ASU-DNN) and benchmark classifiers with SGP data set, including hyperparameter searching for DNN models.  
+
+### 1_hyper_TRAIN.py
+Train all DNN related models (F-DNN, ASU-DNN) and benchmark classifiers with Train data set, including hyperparameter searching for DNN models. 
+
+### 3_hyper_analysis_mlarch.py
+Analyze results and plot.
+
+### 04_MNL_Biogeme_Train.py
+Train MNL and NL model with Biogeme package using Train data set, including elasticity calculation.
+
+### 04_MNL_Biogeme_SGP.py
+Train MNL and NL model with Biogeme package using SGP data set, including elasticity calculation.
+
+### 05_DNN_elasticity_SGP.py
+Caculate the elasticity of DNN related models (F-DNN, ASU-DNN)
+
+### 06_Statistical_Analysis.py
+Statistical analysis of Train and SGP datasets.
+
+### util_nn_mlarch.py
+All training, calculation functions.
